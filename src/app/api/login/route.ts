@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { NextRequest } from "next/server";
 import { v4 as uuid } from "uuid";
+import { redirect } from "next/navigation";
 
 export async function GET(request: NextRequest) {
   const state = uuid();
@@ -18,7 +19,7 @@ export async function GET(request: NextRequest) {
     httpOnly: true,
   });
 
-  return Response.redirect(
+  return redirect(
     `https://accounts.spotify.com/authorize?${queryString.toString()}`
   );
 }

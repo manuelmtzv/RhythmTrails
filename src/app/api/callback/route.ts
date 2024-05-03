@@ -1,12 +1,8 @@
+import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { NextRequest } from "next/server";
 import queryString from "query-string";
-
-type AuthCallbackQuery = {
-  code: string;
-  state: string;
-  error?: string;
-};
+import { AuthCallbackQuery } from "@/types/spotify/auth";
+import { clearCookies, setCookies } from "@/app/utils/spotifyAuthCookies";
 
 export async function GET(request: NextRequest) {
   const { query } = queryString.parseUrl(request.url);
@@ -24,12 +20,13 @@ export async function GET(request: NextRequest) {
   const stateCookie = cookies().get("spotify_auth_state");
 
   if (state !== stateCookie?.value) {
-    return Response.json({
-      status: 400,
-      body: {
-        error: "Invalid state",
-      },
-    });
+    setSpotifyAuthError(
+      "There was a mismatch in the state parameter. We recommend you to try again."
+    );
+
+    return NextResponse.redirect(
+      new URL("/errors/spotify-auth-error", request.url)
+    );
   }
 
   cookies().delete("spotify_auth_state");
@@ -43,34 +40,16 @@ export async function GET(request: NextRequest) {
   } = await getAccessToken(code);
 
   if (tokenError) {
-    return Response.json({
-      status: 400,
-      body: {
-        error: tokenError,
-        error_description,
-      },
-    });
+    setSpotifyAuthError(error_description);
+
+    return NextResponse.redirect(
+      new URL("/errors/spotify-auth-error", request.url)
+    );
   }
 
-  cookies().set("spotify_access_token", access_token, {
-    httpOnly: true,
-  });
+  setCookies(access_token, refresh_token, expires_in);
 
-  cookies().set("spotify_refresh_token", refresh_token, {
-    httpOnly: true,
-  });
-
-  cookies().set("spotify_token_expires", String(expires_in), {
-    httpOnly: true,
-  });
-
-  return Response.json({
-    status: 200,
-    body: {
-      access_token,
-      refresh_token,
-    },
-  });
+  return NextResponse.redirect(new URL("/app", request.url));
 }
 
 async function getAccessToken(code: string) {
@@ -91,4 +70,12 @@ async function getAccessToken(code: string) {
   });
 
   return res.json();
+}
+
+function setSpotifyAuthError(errorMessage: string) {
+  clearCookies();
+
+  cookies().set("spotify_auth_error", errorMessage, {
+    httpOnly: true,
+  });
 }
