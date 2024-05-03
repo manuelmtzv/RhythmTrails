@@ -1,10 +1,11 @@
+import Container from "@/components/base/Container";
 import LoginButton from "@/components/LoginButton";
 
 export default function Home() {
   return (
-    <main className="">
-      <h1 className="text-4xl font-bold">Welcome to Rythm Trails!</h1>
+    <Container>
+      <h1 className="text-xl font-bold mb-4">Welcome to Rythm Trails!</h1>
       <LoginButton />
-    </main>
+    </Container>
   );
 }

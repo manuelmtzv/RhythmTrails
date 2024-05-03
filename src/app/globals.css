@@ -2,28 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
-}
-
 body {
-  color: rgb(var(--foreground-rgb));
+  background: rgb(4, 13, 18);
   background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+    rgba(4, 13, 18, 1) 0%,
+    rgba(4, 13, 28, 1) 50%,
+    rgba(4, 20, 29, 1) 100%
+  );
+  @apply flex flex-col text-white min-h-[100svh];
+}
+
+.main {
+  @apply flex-1;
+}
+
+.content {
+  @apply container mx-auto px-4;
 }
 
 @layer utilities {

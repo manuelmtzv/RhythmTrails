@@ -7,14 +7,14 @@ import { clearCookies, setCookies } from "@/app/utils/spotifyAuthCookies";
 export async function GET(request: NextRequest) {
   const { query } = queryString.parseUrl(request.url);
   const { code, state, error } = query as AuthCallbackQuery;
+  const errorPageUrl = new URL("/errors/spotify-auth-error", request.url);
 
-  if (error) {
-    return Response.json({
-      status: 400,
-      body: {
-        error,
-      },
-    });
+  if (!error) {
+    setSpotifyAuthError(
+      "An error occurred during the authentication process. We recommend you to try again."
+    );
+
+    return NextResponse.redirect(errorPageUrl);
   }
 
   const stateCookie = cookies().get("spotify_auth_state");
@@ -24,9 +24,7 @@ export async function GET(request: NextRequest) {
       "There was a mismatch in the state parameter. We recommend you to try again."
     );
 
-    return NextResponse.redirect(
-      new URL("/errors/spotify-auth-error", request.url)
-    );
+    return NextResponse.redirect(errorPageUrl);
   }
 
   cookies().delete("spotify_auth_state");
@@ -42,9 +40,7 @@ export async function GET(request: NextRequest) {
   if (tokenError) {
     setSpotifyAuthError(error_description);
 
-    return NextResponse.redirect(
-      new URL("/errors/spotify-auth-error", request.url)
-    );
+    return NextResponse.redirect(errorPageUrl);
   }
 
   setCookies(access_token, refresh_token, expires_in);
