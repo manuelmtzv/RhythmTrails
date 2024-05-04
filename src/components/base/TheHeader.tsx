@@ -4,7 +4,7 @@ export default function TheHeader() {
   return (
     <header className="py-8">
       <Container>
-        <h1 className="font-medium text-3xl">Rhythm Trails</h1>
+        <h1 className="font-semibold text-3xl">Rhythm Trails</h1>
       </Container>
     </header>
   );

@@ -14,7 +14,7 @@ export default async function SpotifyAuthErrorPage() {
   return (
     <Container>
       <div className="flex flex-col gap-6 mt-6 md:mt-8 max-w-2xl p-8 mx-auto bg-slate-500 text-center">
-        <h1 className="text-3xl font-bold">
+        <h1 className="text-3xl font-semibold">
           There was an error while trying to login with your{" "}
           <span className="underline">Spotify Account</span>
         </h1>
@@ -29,7 +29,7 @@ export default async function SpotifyAuthErrorPage() {
           Return to home
         </Link>
 
-        <p className="font-bold">
+        <p className="font-semibold">
           Server error:{" "}
           <span className="font-normal underline underline-offset-4">
             {error}

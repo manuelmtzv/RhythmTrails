@@ -3,13 +3,14 @@ import { cookies } from "next/headers";
 import queryString from "query-string";
 import { AuthCallbackQuery } from "@/types/spotify/auth";
 import { clearCookies, setCookies } from "@/app/utils/spotifyAuthCookies";
+import moment from "moment";
 
 export async function GET(request: NextRequest) {
   const { query } = queryString.parseUrl(request.url);
   const { code, state, error } = query as AuthCallbackQuery;
   const errorPageUrl = new URL("/errors/spotify-auth-error", request.url);
 
-  if (!error) {
+  if (error) {
     setSpotifyAuthError(
       "An error occurred during the authentication process. We recommend you to try again."
     );
@@ -43,7 +44,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(errorPageUrl);
   }
 
-  setCookies(access_token, refresh_token, expires_in);
+  const expires_at = moment().add(expires_in, "seconds").toISOString();
+
+  setCookies(access_token, refresh_token, expires_at);
 
   return NextResponse.redirect(new URL("/app", request.url));
 }
