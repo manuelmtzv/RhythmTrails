@@ -14,7 +14,7 @@ export async function middleware(request: NextRequest) {
   const { access_token, refresh_token } = await getCookies();
 
   if (request.url.includes("/app")) {
-    if (!access_token) {
+    if (!access_token && !refresh_token) {
       return NextResponse.redirect(`${absolute}/api/login`);
     }
   }

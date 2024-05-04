@@ -1,4 +1,6 @@
+import { spotifyApi } from "@/api/spotify.api";
 import { getCookies } from "@/app/utils/spotifyAuthCookies";
+import { MeResponse } from "@/types/spotify/user";
 
 export async function me() {
   const { access_token } = (await getCookies()) || {};
@@ -7,11 +9,11 @@ export async function me() {
     return null;
   }
 
-  const response = await fetch("https://api.spotify.com/v1/me", {
+  const response = await spotifyApi.get<MeResponse>("/me", {
     headers: {
       Authorization: `Bearer ${access_token}`,
     },
   });
 
-  return response.json();
+  return response.data;
 }
